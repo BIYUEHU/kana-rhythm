@@ -19,7 +19,7 @@ fn render(dom : @js.Elm, state~ : GameState? = None) -> Unit {
 }
 
 ///|
-fn set_listener(dom : @js.Elm) -> Unit {
+fn set_click_listener(dom : @js.Elm) -> Unit {
   @js.add_event_listener(dom, "click", event => {
     let { value: game_state } = game_state_ref
     let target = @js.get_target(event)
@@ -43,6 +43,10 @@ fn set_listener(dom : @js.Elm) -> Unit {
       ),
     )
   })
+}
+
+///|
+fn set_keyboard_listener(dom : @js.Elm) -> Unit {
   @js.listen_key(@js.get_document(), (key, _) => {
     let { value: game_state } = game_state_ref
     render(
@@ -77,7 +81,8 @@ fn set_timer(dom : @js.Elm) -> Unit {
 ///|
 fn main {
   let bind_dom = @js.query_element("#app")
-  set_listener(bind_dom)
+  set_click_listener(bind_dom)
+  set_keyboard_listener(bind_dom)
   set_timer(bind_dom)
   render(bind_dom)
 }

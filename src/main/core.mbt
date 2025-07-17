@@ -23,6 +23,17 @@ struct GameState {
 } derive(Eq)
 
 ///|
+impl Default for GameState with default() -> GameState {
+  {
+    status: Idle,
+    current_question: None,
+    score: @lib.Nat::from_int(0),
+    question_index: @lib.Nat::from_int(0),
+    time_left: @lib.Nat::from_int(THINKING_TIME),
+  }
+}
+
+///|
 enum AnswerQuestionType {
   First
   Second
@@ -32,23 +43,26 @@ enum AnswerQuestionType {
 }
 
 ///|
+fn AnswerQuestionType::get_answer(
+  self : AnswerQuestionType,
+  question : Question
+) -> String {
+  match self {
+    Literal(literal) => literal
+    First => question.choices[0]
+    Second => question.choices[1]
+    Third => question.choices[2]
+    Timeout => ""
+  }
+}
+
+///|
 enum GameAction {
   StartGame
   PauseGame
   ResumeGame
   AnswerQuestion(AnswerQuestionType)
   TimeTick
-}
-
-///|
-impl Default for GameState with default() -> GameState {
-  {
-    status: Idle,
-    current_question: None,
-    score: @lib.Nat::from_int(0),
-    question_index: @lib.Nat::from_int(0),
-    time_left: @lib.Nat::from_int(THINKING_TIME),
-  }
 }
 
 ///|
@@ -69,27 +83,25 @@ fn transition(state : GameState, action : GameAction) -> GameState {
 }
 
 ///|
+fn calculate_score(state : GameState) -> @lib.Nat {
+  @lib.Nat::from_int(
+    match state.time_left.to_int() {
+      6..=7 => 3
+      3..=5 => 2
+      _ => 1
+    },
+  )
+}
+
+///|
 fn answer_question(state : GameState, answer : AnswerQuestionType) -> GameState {
   match state.current_question {
     Some(question) => {
-      let answer = match answer {
-        Literal(literal) => literal
-        First => question.choices[0]
-        Second => question.choices[1]
-        Third => question.choices[2]
-        Timeout => ""
-      }
+      let answer = answer.get_answer(question)
       let score = if answer == question.romaji {
         @js.play_sound("/correct.mp3")
         play_animation(Some(state.time_left))
-        state.score +
-        @lib.Nat::from_int(
-          match state.time_left.to_int() {
-            6..=7 => 3
-            3..=5 => 2
-            _ => 1
-          },
-        )
+        state.score + calculate_score(state)
       } else {
         @js.play_sound("/incorrect.mp3")
         play_animation(None)
@@ -145,7 +157,6 @@ fn generate_question() -> Question {
 
 ///|
 fn play_animation(time_left : @lib.Nat?) -> Unit {
-  // let overlay = @js.query_element("#feedbackOverlay")
   let scoreAnimation = @js.query_element("#scoreAnimation")
   let text = match time_left {
     Some(time_left) =>
