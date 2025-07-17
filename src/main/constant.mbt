@@ -1,11 +1,11 @@
 ///|
-pub const TOTAL_QUESTIONS = 10
+const TOTAL_QUESTIONS = 10
 
 ///|
-pub const THINKING_TIME = 5
+const THINKING_TIME = 7
 
 ///|
-pub let kana_to_romaji_map : Map[String, String] = {
+let kana_to_romaji_map : Map[String, String] = {
   "あ": "a",
   "い": "i",
   "う": "u",

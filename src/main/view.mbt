@@ -1,64 +1,121 @@
 ///|
-pub fn view(state : GameState) -> @js.Html {
-  HTag(
-    "div",
-    {},
+fn view(state : GameState) -> @js.Html {
+  HSeq(
     [
-      HTag("div", { "class": "game-state", "id": "gameState" }, [
+      HTag(
+        "div",
+        { "class": "game-state", "id": "gameState" },
         HText(
           match state.status {
-            Idle => "游戏状态将在这里显示"
+            Idle => "Game states will be displayed here."
             Playing | Paused => {
               let display = if state.status == Playing {
                 "playing"
               } else {
                 "paused"
               }
-              "状态: \{display} | 分数: \{state.score} | 进度: \{state.question_index}/\{TOTAL_QUESTIONS}"
+              "Status: \{display} | Score: \{state.score} | Progress: \{state.question_index}/\{TOTAL_QUESTIONS}"
             }
-            Finished => "状态：finished"
+            Finished => "Status: finished"
           },
         ),
-      ]),
-      HTag("div", { "class": "question", "id": "question" }, [
+      ),
+      HTag(
+        "div",
+        { "class": "question", "id": "question" },
         match (state.status, state.current_question) {
           (Playing, Some(question)) => HText(question.kana)
-          (Finished, _) => HText("游戏结束！")
-          _ => HText("按开始按钮开始游戏")
+          (Finished, _) =>
+            HSeq([
+              HText("Game Over!"),
+              HTag("br", {}, HEmpty),
+              HTag("span", {}, HText("You scored \{state.score} points!")),
+            ])
+          _ => HText("Press start button to begin the game")
         },
-      ]),
+      ),
       ..[
         @js.HTag(
           "div",
           { "class": "timer", "id": "timer" },
           if state.status == Playing {
-            [HText("剩余时间: \{state.time_left}")]
+            HText("Time left: \{state.time_left}")
           } else {
-            []
+            HEmpty
           },
         ),
         HTag(
           "div",
           { "class": "choices", "id": "choices" },
-          match state.current_question {
-            Some(question) =>
-              question.choices.map(v => @js.HTag(
-                "button",
-                { "class": "choice-btn", "id": "choice" },
-                [HText(v)],
-              ))
-            None => []
+          match (state.status, state.current_question) {
+            (Playing, Some(question)) =>
+              HSeq(
+                question.choices.map(v => @js.HTag(
+                  "button",
+                  { "class": "choice-btn", "id": "choiceBtn" },
+                  HText(v),
+                )),
+              )
+            _ => HEmpty
           },
         ),
       ],
-      HTag("div", { "class": "controls" }, [
-        HTag("button", { "class": "btn", "id": "startBtn" }, [
-          HText("开始游戏"),
-        ]),
-        HTag("button", { "class": "btn", "id": "pauseBtn" }, [HText("暂停")]),
-        HTag("button", { "class": "btn", "id": "resumeBtn" }, [HText("继续")]),
-      ]),
-      HTag("div", { "class": "scores", "id": "scores" }, []),
+      HTag(
+        "div",
+        { "class": "controls" },
+        HSeq(
+          match state.status {
+            Playing =>
+              [
+                HTag(
+                  "button",
+                  { "class": "btn", "id": "pauseBtn" },
+                  HText("Pause"),
+                ),
+                HTag(
+                  "button",
+                  { "class": "btn", "id": "startBtn" },
+                  HText("Restart"),
+                ),
+              ]
+            Paused =>
+              [
+                HTag(
+                  "button",
+                  { "class": "btn", "id": "resumeBtn" },
+                  HText("Resume"),
+                ),
+                HTag(
+                  "button",
+                  { "class": "btn", "id": "startBtn" },
+                  HText("Restart"),
+                ),
+              ]
+            Finished =>
+              [
+                HTag(
+                  "button",
+                  { "class": "btn", "id": "startBtn" },
+                  HText("Play Again"),
+                ),
+                HTag(
+                  "button",
+                  { "class": "btn", "id": "saveBtn" },
+                  HText("Save Score"),
+                ),
+              ]
+            Idle =>
+              [
+                HTag(
+                  "button",
+                  { "class": "btn", "id": "startBtn" },
+                  HText("Start Game"),
+                ),
+              ]
+          },
+        ),
+      ),
+      HTag("div", { "class": "scores", "id": "scores" }, HEmpty),
     ],
   )
 }

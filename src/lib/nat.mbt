@@ -21,7 +21,8 @@ pub impl Add for Nat with op_add(self : Nat, other : Nat) -> Nat {
 pub impl Sub for Nat with op_sub(self : Nat, other : Nat) -> Nat {
   match (self, other) {
     (Z, _) => Z
-    (S(a), b) => a - b
+    (S(a), Z) => a
+    (a, S(b)) => a - b
   }
 }
 

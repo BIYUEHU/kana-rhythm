@@ -5,41 +5,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kana Rhythm</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="src/assets/style.css">
 </head>
 
 <body>
   <div class="game-container">
     <h1>Kana Rhythm</h1>
-
-    <!-- <div class="game-state" id="gameState">
-      游戏状态将在这里显示
-    </div>
-
-    <div class="question" id="question">按开始按钮开始游戏</div>
-
-    <div class="timer" id="timer"></div>
-
-    <div class="choices" id="choices"></div> -->
-
     <div id="app"></div>
-
-    <!-- <div class="controls">
-      <button class="btn" id="startBtn">开始游戏</button>
-      <button class="btn" id="pauseBtn">暂停</button>
-      <button class="btn" id="resumeBtn">继续</button>
-    </div> -->
-
-    <!-- <div class="scores" id="scores"></div> -->
-
-    <div class="debug" id="debug">
-      <!-- <strong>数学思维要点演示：</strong><br>
-      1. 不可变状态 - 每次状态变化都创建新状态<br>
-      2. 纯函数 - 所有状态转换都是可预测的<br>
-      3. 类型安全 - 状态转换只能在有效状态间进行<br>
-      4. 副作用隔离 - IO操作被封装在特定函数中<br>
-      5. 组合性 - 复杂行为由简单函数组合而成 -->
+    <div class="debug">
+      <strong>Functional Programming Coding And Design Principles</strong><br>
+      1. Immutable state - Each state change creates a new state<br>
+      2. Pure functions - All state transitions are predictable<br>
+      3. Type safety - State transitions can only occur between valid states<br>
+      4. Isolated side effects - IO operations are encapsulated in specific functions<br>
+      5. Compositionality - Complex behaviors are composed of simple functions<br>
     </div>
+    <div class="feedback-overlay" id="feedbackOverlay"></div>
+    <div class="score-animation" id="scoreAnimation"></div>
   </div>
 
   <script src="target/js/release/build/main/main.js"></script>

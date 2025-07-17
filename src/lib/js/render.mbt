@@ -1,8 +1,10 @@
 ///|
 pub(all) enum Html {
-  HTag(String, TagAttr, Array[Html])
+  HSeq(Array[Html])
+  HTag(String, TagAttr, Html)
   HTagS(String, TagAttr)
   HText(String)
+  HEmpty
 } derive(Show)
 
 ///|
@@ -19,19 +21,15 @@ fn handle_attrs(attrs : TagAttr) -> String {
 ///|
 pub impl Show for Html with to_string(self : Html) -> String {
   match self {
+    HSeq(children) => children.map(child => child.to_string()).join("")
     HTagS(tag_name, attrs) if attrs.is_empty() => "<\{tag_name}/>"
     HTagS(tag_name, attrs) => "<\{tag_name} \{handle_attrs(attrs)} />"
-    HTag(tag_name, attrs, []) =>
-      "<\{tag_name} \{handle_attrs(attrs)} ></\{tag_name}>"
-    HTag(tag_name, attrs, children) if attrs.is_empty() => {
-      let children = children.map(child => child.to_string()).join("")
+    HTag(tag_name, attrs, children) if attrs.is_empty() =>
       "<\{tag_name}>\{children}</\{tag_name}>"
-    }
-    HTag(tag_name, attrs, children) => {
-      let children = children.map(child => child.to_string()).join("")
+    HTag(tag_name, attrs, children) =>
       "<\{tag_name} \{handle_attrs(attrs)} >\{children}</\{tag_name}>"
-    }
     HText(text) => text
+    HEmpty => ""
   }
 }
 
