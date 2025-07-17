@@ -1,0 +1,7 @@
+{
+  "is-main": true,
+  "import": [
+    "himeno/kana-rhythm/lib",
+    "himeno/kana-rhythm/lib/js"
+  ]
+}

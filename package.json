@@ -1,0 +1,8 @@
+{
+  "name": "kana-rhythm",
+  "scripts": {
+    "build": "moon build --target js && npx vite build",
+    "watch": "moon build --target js --watch",
+    "dev": "npx vite"
+  }
+}
