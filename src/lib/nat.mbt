@@ -50,7 +50,7 @@ pub fn Nat::to_int(self : Nat) -> Int {
 ///|
 pub fn Nat::from_int(num : Int) -> Nat {
   match num {
-    1..<_ => S(Nat::from_int(num - 1))
+    1..<_ => S((num - 1) |> Nat::from_int())
     _ => Z
   }
 }

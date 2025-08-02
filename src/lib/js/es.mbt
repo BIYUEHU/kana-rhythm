@@ -13,3 +13,11 @@ pub extern "js" fn clear_interval(handle : Int) = "clearInterval"
 ///|
 pub extern "js" fn random_int(limit : Int) -> Int =
   #|limit => Math.floor(Math.random() * limit);
+
+///|
+pub extern "js" fn parse_int(string : String, radix : Int) -> UInt64 =
+  #|(string, radix) => {console.log("internal", string);let x =parseInt(string, radix);console.log("internal return", x);return x;}
+
+///|
+pub extern "js" fn console_log(message : String) =
+  #|message => console.log(message);

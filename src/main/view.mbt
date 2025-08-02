@@ -8,14 +8,8 @@ fn view(state : GameState) -> @js.Html {
         HText(
           match state.status {
             Idle => "Game states will be displayed here."
-            Playing | Paused => {
-              let display = if state.status == Playing {
-                "playing"
-              } else {
-                "paused"
-              }
-              "Status: \{display} | Score: \{state.score} | Progress: \{state.question_index}/\{TOTAL_QUESTIONS}"
-            }
+            Playing | Paused =>
+              "Status: \{state.status.to_string().to_lower()} | Score: \{state.score} | Progress: \{state.question_index}/\{TOTAL_QUESTIONS}"
             Finished => "Status: finished"
           },
         ),
@@ -31,7 +25,7 @@ fn view(state : GameState) -> @js.Html {
               HTag("br", {}, HEmpty),
               HTag("span", {}, HText("You scored \{state.score} points!")),
             ])
-          _ => HText("Press start button to begin the game")
+          _ => HText("Press Space to begin the game")
         },
       ),
       ..[
@@ -115,7 +109,20 @@ fn view(state : GameState) -> @js.Html {
           },
         ),
       ),
-      HTag("div", { "class": "scores", "id": "scores" }, HEmpty),
+      HTag(
+        "div",
+        { "class": "scores", "id": "scores" },
+        {
+          let arr = state.records.map(state => @js.HText(
+            "Score: \{state.score} | Time: \{state.timestamp}<br />",
+          ))
+          if arr.length() > 0 {
+            HSeq(arr)
+          } else {
+            HText("No scores yet.")
+          }
+        },
+      ),
     ],
   )
 }

@@ -5,6 +5,9 @@ const TOTAL_QUESTIONS = 10
 const THINKING_TIME = 7
 
 ///|
+const LOCAL_STORAGE_KEY = "kana-rhythm-data-reecord"
+
+///|
 let kana_to_romaji_map : Map[String, String] = {
   "あ": "a",
   "い": "i",

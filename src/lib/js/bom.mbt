@@ -4,7 +4,7 @@ pub extern "js" fn play_sound(url : String) =
 
 ///|
 pub extern "js" fn get_local_storage(key : String) -> String =
-  #| (key) => localStorage.getItem(key)
+  #| (key) => localStorage.getItem(key) ?? ""
 
 ///|
 pub extern "js" fn set_local_storage(key : String, value : String) =

@@ -216,11 +216,6 @@ h1::after {
   left: 100%;
 }
 
-.choice-btn:active {
-  transform: translateY(-2px);
-}
-
-
 .controls {
   display: flex;
   justify-content: center;

@@ -14,12 +14,22 @@ struct Question {
 } derive(Eq)
 
 ///|
+struct Record {
+  score : String
+  timestamp : String
+} derive(Eq, Show)
+
+///|
+typealias Array[Record] as Records
+
+///|
 struct GameState {
   status : GameStatus
   current_question : Question?
   score : @lib.Nat
   question_index : @lib.Nat
   time_left : @lib.Nat
+  records : Records
 } derive(Eq)
 
 ///|
@@ -27,9 +37,10 @@ impl Default for GameState with default() -> GameState {
   {
     status: Idle,
     current_question: None,
-    score: @lib.Nat::from_int(0),
-    question_index: @lib.Nat::from_int(0),
-    time_left: @lib.Nat::from_int(THINKING_TIME),
+    score: 0 |> @lib.Nat::from_int,
+    question_index: 0 |> @lib.Nat::from_int,
+    time_left: THINKING_TIME |> @lib.Nat::from_int,
+    records: [],
   }
 }
 
@@ -45,7 +56,7 @@ enum AnswerQuestionType {
 ///|
 fn AnswerQuestionType::get_answer(
   self : AnswerQuestionType,
-  question : Question
+  question : Question,
 ) -> String {
   match self {
     Literal(literal) => literal
@@ -63,6 +74,7 @@ enum GameAction {
   ResumeGame
   AnswerQuestion(AnswerQuestionType)
   TimeTick
+  SaveScore
 }
 
 ///|
@@ -71,13 +83,15 @@ fn transition(state : GameState, action : GameAction) -> GameState {
     (_, StartGame) =>
       {
         ..Default::default(),
+        records: state.records,
         status: Playing,
         current_question: Some(generate_question()),
       }
     (Playing, PauseGame) => { ..state, status: Paused }
     (Paused, ResumeGame) => { ..state, status: Playing }
     (Playing, AnswerQuestion(answer)) => answer_question(state, answer)
-    (Playing, TimeTick) => handle_time_tick(state)
+    (Playing, TimeTick) => state |> handle_time_tick
+    (Finished, SaveScore) => save_score(state)
     _ => state
   }
 }
@@ -99,12 +113,12 @@ fn answer_question(state : GameState, answer : AnswerQuestionType) -> GameState 
     Some(question) => {
       let answer = answer.get_answer(question)
       let score = if answer == question.romaji {
-        @js.play_sound("/correct.mp3")
-        play_animation(Some(state.time_left))
+        "/correct.mp3" |> @js.play_sound
+        state.time_left |> Some |> play_animation
         state.score + calculate_score(state)
       } else {
-        @js.play_sound("/incorrect.mp3")
-        play_animation(None)
+        "/incorrect.mp3" |> @js.play_sound
+        None |> play_animation
         state.score
       }
       let question_index = @lib.S(state.question_index)
@@ -115,8 +129,8 @@ fn answer_question(state : GameState, answer : AnswerQuestionType) -> GameState 
           ..state,
           score,
           question_index,
-          current_question: Some(generate_question()),
-          time_left: @lib.Nat::from_int(THINKING_TIME),
+          current_question: generate_question() |> Some,
+          time_left: THINKING_TIME |> @lib.Nat::from_int,
         }
       }
     }
@@ -125,9 +139,24 @@ fn answer_question(state : GameState, answer : AnswerQuestionType) -> GameState 
 }
 
 ///|
+fn save_score(state : GameState) -> GameState {
+  let timestamp = @js.Date::now().to_string()
+  if state.records.search_by(record => record.timestamp == timestamp) is None {
+    let records = [
+        { score: state.score.to_string(), timestamp },
+        ..load_records(),
+      ]
+    save_records(records)
+    { ..state, records, }
+  } else {
+    state
+  }
+}
+
+///|
 fn handle_time_tick(state : GameState) -> GameState {
   if state.time_left <= S(Z) {
-    answer_question(state, Timeout)
+    state |> answer_question(Timeout)
   } else {
     { ..state, time_left: state.time_left - S(Z) }
   }
@@ -136,7 +165,7 @@ fn handle_time_tick(state : GameState) -> GameState {
 ///|
 fn generate_question() -> Question {
   let keys = kana_to_romaji_map.keys().to_array()
-  let get_random_int = () => @js.random_int(keys.length())
+  let get_random_int = () => keys.length() |> @js.random_int
   let num1 = get_random_int()
   let num2 = loop get_random_int() {
     target if target != num1 => break target
@@ -153,30 +182,4 @@ fn generate_question() -> Question {
     .shuffle(rand=@js.random_int)
     .map(index => kana_to_romaji_map.get(keys[index]).unwrap()),
   }
-}
-
-///|
-fn play_animation(time_left : @lib.Nat?) -> Unit {
-  let scoreAnimation = @js.query_element("#scoreAnimation")
-  let text = match time_left {
-    Some(time_left) =>
-      match time_left.to_int() {
-        6..=7 => "Perfect"
-        3..=5 => "Nice"
-        _ => "Soso"
-      }
-    None => "Wrong"
-  }
-  let class = text.to_lower()
-  @js.set_text(scoreAnimation, text)
-  @js.add_class(scoreAnimation, class)
-  @js.add_class(scoreAnimation, "show")
-  let _ = @js.set_timeout(
-    () => {
-      @js.remove_class(scoreAnimation, class)
-      @js.remove_class(scoreAnimation, "show")
-    },
-    1000,
-  )
-
 }
