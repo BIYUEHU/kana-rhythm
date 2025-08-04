@@ -17,7 +17,7 @@ pub extern "js" fn get_text(elm : Elm) -> String =
 pub extern "js" fn set_attribute(
   elm : Elm,
   attr_name : String,
-  attr_value : String
+  attr_value : String,
 ) -> Unit =
   #|(elm, attrName, attrValue) => elm.setAttribute(attrName, attrValue)
 
@@ -43,13 +43,17 @@ pub type Event
 pub extern "js" fn add_event_listener(
   elm : Elm,
   event_name : String,
-  callback : (Event) -> Unit
+  callback : (Event) -> Unit,
 ) -> Unit =
   #|(elm, eventName, callback) => elm.addEventListener(eventName, callback)
 
 ///|
 pub extern "js" fn get_target(event : Event) -> Elm =
   #|event => event.target
+
+///|
+pub extern "js" fn get_elm_value(elm : Elm) -> String =
+  #|elm => elm.value
 
 ///|
 pub extern "js" fn on_load(callback : () -> Unit) =
@@ -61,9 +65,9 @@ pub typealias Map[String, String] as TagAttr
 ///|
 pub extern "js" fn listen_key(
   elm : Elm,
-  callback : (String, Event) -> Unit
+  callback : (String, Event) -> Unit,
 ) -> Unit =
-  #|(elm, callback) => elm.addEventListener("keydown", (event) => callback(event.key, event));
+  #|(elm, callback) => elm.addEventListener("keydown", (event) => callback(event.key, event))
 
 ///|
 pub extern "js" fn get_window() -> Elm =

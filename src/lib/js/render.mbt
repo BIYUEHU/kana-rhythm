@@ -12,7 +12,8 @@ fn handle_attrs(attrs : TagAttr) -> String {
   attrs
   .to_array()
   .map(attr => match attr.1 {
-    "" => attr.0
+    "" | "on" | "true" => attr.0
+    "off" | "false" => ""
     value => attr.0 + "=\"" + value + "\""
   })
   .join(" ")

@@ -5,10 +5,16 @@ const TOTAL_QUESTIONS = 10
 const THINKING_TIME = 7
 
 ///|
-const LOCAL_STORAGE_KEY = "kana-rhythm-data-reecord"
+const STORAGE_KEY_RECORDS = "kana-rhythm-data-reecordS"
 
 ///|
-let kana_to_romaji_map : Map[String, String] = {
+const STORAGE_KEY_QUESTION_COUNT = "kana-rhythm-data-question-count"
+
+///|
+const STORAGE_KEY_KANA_MODE = "kana-rhythm-data-kana-mode"
+
+///|
+let hiragana_to_romaji_map : Map[String, String] = {
   "あ": "a",
   "い": "i",
   "う": "u",
@@ -81,3 +87,85 @@ let kana_to_romaji_map : Map[String, String] = {
   "ぺ": "pe",
   "ぽ": "po",
 }
+
+///|
+let katakana_to_romaji_map : Map[String, String] = {
+  "ア": "a",
+  "イ": "i",
+  "ウ": "u",
+  "エ": "e",
+  "オ": "o",
+  "カ": "ka",
+  "キ": "ki",
+  "ク": "ku",
+  "ケ": "ke",
+  "コ": "ko",
+  "サ": "sa",
+  "シ": "shi",
+  "ス": "su",
+  "セ": "se",
+  "ソ": "so",
+  "タ": "ta",
+  "チ": "chi",
+  "ツ": "tsu",
+  "テ": "te",
+  "ト": "to",
+  "ナ": "na",
+  "ニ": "ni",
+  "ヌ": "nu",
+  "ネ": "ne",
+  "ノ": "no",
+  "ハ": "ha",
+  "ヒ": "hi",
+  "フ": "fu",
+  "ヘ": "he",
+  "ホ": "ho",
+  "マ": "ma",
+  "ミ": "mi",
+  "ム": "mu",
+  "メ": "me",
+  "モ": "mo",
+  "ヤ": "ya",
+  "ユ": "yu",
+  "ヨ": "yo",
+  "ラ": "ra",
+  "リ": "ri",
+  "ル": "ru",
+  "レ": "re",
+  "ロ": "ro",
+  "ワ": "wa",
+  "ヲ": "wo",
+  "ン": "n",
+  "ガ": "ga",
+  "ギ": "gi",
+  "グ": "gu",
+  "ゲ": "ge",
+  "ゴ": "go",
+  "ザ": "za",
+  "ジ": "ji",
+  "ズ": "zu",
+  "ゼ": "ze",
+  "ゾ": "zo",
+  "ダ": "da",
+  "ヂ": "ji",
+  "ヅ": "zu",
+  "デ": "de",
+  "ド": "do",
+  "バ": "ba",
+  "ビ": "bi",
+  "ブ": "bu",
+  "ベ": "be",
+  "ボ": "bo",
+  "パ": "pa",
+  "ピ": "pi",
+  "プ": "pu",
+  "ペ": "pe",
+  "ポ": "po",
+}
+
+///|
+let kana_to_romaji_map : Map[String, String] = Map::of(
+  FixedArray::from_array(
+    [..hiragana_to_romaji_map.to_array(), ..katakana_to_romaji_map.to_array()],
+  ),
+)
