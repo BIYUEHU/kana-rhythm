@@ -15,7 +15,7 @@
     "vite"
   ],
   "scripts": {
-    "build": "moon build --target js && npx vite build",
+    "build": "python scripts/build.py",
     "watch": "moon build --target js --watch",
     "dev": "npx vite"
   }
