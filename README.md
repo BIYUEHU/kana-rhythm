@@ -9,6 +9,8 @@ A Japanese kana learning game base on [`MoonBit`](https://www.moonbitlang.com/) 
 
 <img src="public/favicon.png" width="280" alt="icon" />
 
+**[👉 Online 🗾 Demo 👈](http://kana.hotaru.icu)**
+
 </div>
 
 <!-- markdownlint-enable -->
